@@ -1,5 +1,5 @@
 QT       += core gui
-
+QT       += network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
@@ -9,9 +9,11 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    1/weathertrayicon.cpp \
     main.cpp
 
-HEADERS +=
+HEADERS += \
+    1/weathertrayicon.h
 
 TRANSLATIONS += \
     Advanced_QT_Creating_Great_Software_pl_PL.ts
