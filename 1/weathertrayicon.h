@@ -3,6 +3,7 @@
 
 #include <QAction>
 #include <QCache>
+#include <QJsonDocument>
 #include <QMenu>
 #include <QNetworkReply>
 #include <QSystemTrayIcon>
@@ -13,15 +14,18 @@ class WeatherTrayIcon : public QSystemTrayIcon
 public:
     explicit WeatherTrayIcon();
 private slots:
-    void requestXml();
-    void readXml(QNetworkReply *reply);
+    void requestJSON();
+    void readJSON(QNetworkReply *reply);
     void readIcon(QNetworkReply *reply);
-    void setAirport(QAction *action);
+    void setCity(QAction *action);
 private:
+    void createContextMenu();
+    void populateToolTip(QJsonDocument *document);
+
     QMenu menu;
-    QNetworkAccessManager *networkXmlAccess;
+    QNetworkAccessManager *networkJSONAccess;
     QNetworkAccessManager *networkIconAccess;
-    QString airport;
+    QString city;
     QCache<QUrl, QIcon> iconCache;
     int retryDelaySec;
 };
