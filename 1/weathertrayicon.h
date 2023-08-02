@@ -3,6 +3,7 @@
 
 #include <QAction>
 #include <QCache>
+#include <QIcon>
 #include <QJsonDocument>
 #include <QMenu>
 #include <QNetworkReply>
@@ -16,9 +17,11 @@ public:
 private slots:
     void requestJSON();
     void readJSON(QNetworkReply *reply);
-    void readIcon(QNetworkReply *reply);
     void setCity(QAction *action);
+
 private:
+    QIcon getWeatherIcon(bool isDay, int weatherCode);
+    void updateIcon(QJsonDocument *document);
     void createContextMenu();
     void populateToolTip(QJsonDocument *document);
     QString textForTag(const QString &tag, QJsonDocument *document);
@@ -26,7 +29,6 @@ private:
 
     QMenu menu;
     QNetworkAccessManager *networkJSONAccess;
-    QNetworkAccessManager *networkIconAccess;
     QString city;
     QString coordinates;
     QCache<QUrl, QIcon> iconCache;

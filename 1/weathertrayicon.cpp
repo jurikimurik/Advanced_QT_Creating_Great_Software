@@ -11,9 +11,7 @@ WeatherTrayIcon::WeatherTrayIcon() : QSystemTrayIcon(), retryDelaySec(1)
     setIcon(QIcon(":/1/rss.png"));
     createContextMenu();
     networkJSONAccess = new QNetworkAccessManager(this);
-    networkIconAccess = new QNetworkAccessManager(this);
     connect(networkJSONAccess, &QNetworkAccessManager::finished, this, &WeatherTrayIcon::readJSON);
-    connect(networkIconAccess, &QNetworkAccessManager::finished, this, &WeatherTrayIcon::readIcon);
     QTimer::singleShot(0, this, &WeatherTrayIcon::requestJSON);
 }
 
@@ -29,9 +27,21 @@ void WeatherTrayIcon::readJSON(QNetworkReply *reply)
     }
     retryDelaySec = 1;
     QJsonDocument document = QJsonDocument::fromJson(reply->readAll());
-    if(!document.isNull())
+    if(!document.isNull()) {
         populateToolTip(&document);
+        updateIcon(&document);
+    }
     QTimer::singleShot(60*60*1000, this, &WeatherTrayIcon::requestJSON);
+}
+
+void WeatherTrayIcon::updateIcon(QJsonDocument *document)
+{
+    QString weathercode = textForTag("weathercode", document);
+    QString isDay = textForTag("is_day", document);
+    if(weathercode.isEmpty() || isDay.isEmpty())
+        return;
+
+    setIcon(getWeatherIcon(isDay.toInt(), weathercode.toInt()));
 }
 
 void WeatherTrayIcon::setCity(QAction *action)
@@ -43,9 +53,32 @@ void WeatherTrayIcon::setCity(QAction *action)
     requestJSON();
 }
 
-void WeatherTrayIcon::readIcon(QNetworkReply *reply)
+QIcon WeatherTrayIcon::getWeatherIcon(bool isDay, int weatherCode)
 {
+    QString searchedName;
+    if(isDay)
+        searchedName += "day_";
+    else
+        searchedName += "night_";
+    searchedName += QString::number(weatherCode) + ".png";
 
+    {
+        //Try to find icon
+        QIcon newIcon(":/weather/" + searchedName);
+        if(!newIcon.isNull())
+            return newIcon;
+    }
+
+
+    {
+        //If there is none, search with "none_"
+        QIcon newIcon(":/weather/none_" + QString::number(weatherCode) + ".png");
+        if(!newIcon.isNull())
+            return newIcon;
+    }
+
+    // Default icon
+    return QIcon(":/1/rss.png");
 }
 
 void WeatherTrayIcon::requestJSON()
@@ -95,7 +128,7 @@ void WeatherTrayIcon::populateToolTip(QJsonDocument *document)
         QString toolTipText = tr("<font color=darkblue>%1</font><br>").arg(city);
         QString temperature = textForTag("temperature", document);
         if(!temperature.isEmpty())
-            toolTipText += toolTipField("Weather", "green", temperature);
+        toolTipText += toolTipField(tr("Temperatura"), "green", temperature, false);
 
 #ifndef Q_WS_X11
         toolTipText = QTextDocumentFragment::fromHtml(toolTipText).toPlainText();
