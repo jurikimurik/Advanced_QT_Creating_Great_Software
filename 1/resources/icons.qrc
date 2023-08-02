@@ -3,4 +3,50 @@
         <file>rss.png</file>
         <file>exit.png</file>
     </qresource>
+    <qresource prefix="/">
+        <file>weather/night_99.png</file>
+        <file>weather/night_96.png</file>
+        <file>weather/night_95.png</file>
+        <file>weather/night_75.png</file>
+        <file>weather/night_73.png</file>
+        <file>weather/night_71.png</file>
+        <file>weather/night_67.png</file>
+        <file>weather/night_66.png</file>
+        <file>weather/night_65.png</file>
+        <file>weather/night_63.png</file>
+        <file>weather/night_61.png</file>
+        <file>weather/night_3.png</file>
+        <file>weather/night_2.png</file>
+        <file>weather/night_1.png</file>
+        <file>weather/night_0.png</file>
+        <file>weather/day_99.png</file>
+        <file>weather/day_96.png</file>
+        <file>weather/day_95.png</file>
+        <file>weather/day_75.png</file>
+        <file>weather/day_73.png</file>
+        <file>weather/day_71.png</file>
+        <file>weather/day_67.png</file>
+        <file>weather/day_66.png</file>
+        <file>weather/day_65.png</file>
+        <file>weather/day_63.png</file>
+        <file>weather/day_61.png</file>
+        <file>weather/day_2.png</file>
+        <file>weather/day_1.png</file>
+        <file>weather/day_0.png</file>
+        <file>weather/none_86.png</file>
+        <file>weather/none_85.png</file>
+        <file>weather/none_82.png</file>
+        <file>weather/none_81.png</file>
+        <file>weather/none_80.png</file>
+        <file>weather/none_77.png</file>
+        <file>weather/none_57.png</file>
+        <file>weather/none_56.png</file>
+        <file>weather/none_55.png</file>
+        <file>weather/none_53.png</file>
+        <file>weather/none_51.png</file>
+        <file>weather/none_48.png</file>
+        <file>weather/none_45.png</file>
+        <file>weather/none_3.png</file>
+        <file>weather/day_3.png</file>
+    </qresource>
 </RCC>
