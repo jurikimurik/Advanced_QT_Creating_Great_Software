@@ -21,11 +21,14 @@ private slots:
 private:
     void createContextMenu();
     void populateToolTip(QJsonDocument *document);
+    QString textForTag(const QString &tag, QJsonDocument *document);
+    QString toolTipField(const QString &name, const QString &htmlColor, const QString &value, bool appendBr = true);
 
     QMenu menu;
     QNetworkAccessManager *networkJSONAccess;
     QNetworkAccessManager *networkIconAccess;
     QString city;
+    QString coordinates;
     QCache<QUrl, QIcon> iconCache;
     int retryDelaySec;
 };

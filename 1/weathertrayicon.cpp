@@ -4,6 +4,7 @@
 #include <QActionGroup>
 #include <QSettings>
 #include <QTimer>
+#include <QTextDocumentFragment>
 
 WeatherTrayIcon::WeatherTrayIcon() : QSystemTrayIcon(), retryDelaySec(1)
 {
@@ -35,7 +36,11 @@ void WeatherTrayIcon::readJSON(QNetworkReply *reply)
 
 void WeatherTrayIcon::setCity(QAction *action)
 {
-
+    city = action->text();
+    QSettings settings;
+    settings.setValue("city", city);
+    settings.setValue("coordinates", action->data());
+    requestJSON();
 }
 
 void WeatherTrayIcon::readIcon(QNetworkReply *reply)
@@ -45,7 +50,6 @@ void WeatherTrayIcon::readIcon(QNetworkReply *reply)
 
 void WeatherTrayIcon::requestJSON()
 {
-    QString coordinates;
     if(city == "Gdansk")
         coordinates = "54.22 18.38";
     else if(city == "Wejherowo")
@@ -65,11 +69,12 @@ void WeatherTrayIcon::createContextMenu()
 {
     QStringList cities;
     cities << "Gdansk" << "Wejherowo" << "Gdynia";
-    QStringList coordinates;
-    coordinates << "54.22 18.38" << "54.36 18.15" << "54.32 18.32";
+    QStringList allCoordinates;
+    allCoordinates << "54.22 18.38" << "54.36 18.15" << "54.32 18.32";
 
     QSettings settings;
     city = settings.value("city", QVariant(cities.at(0))).toString();
+    coordinates = settings.value("coordinates", QVariant(allCoordinates.at(0))).toString();
     QActionGroup *group = new QActionGroup(this);
     for (int i = 0; i < cities.size(); ++i) {
         const QString &anCity = cities.at(i);
@@ -77,7 +82,7 @@ void WeatherTrayIcon::createContextMenu()
         group->addAction(action);
         action->setCheckable(true);
         action->setChecked(anCity == city);
-        action->setData(coordinates.at(i));
+        action->setData(allCoordinates.at(i));
     }
     connect(group, &QActionGroup::triggered, this, &WeatherTrayIcon::setCity);
     menu.addSeparator();
@@ -87,5 +92,32 @@ void WeatherTrayIcon::createContextMenu()
 
 void WeatherTrayIcon::populateToolTip(QJsonDocument *document)
 {
+        QString toolTipText = tr("<font color=darkblue>%1</font><br>").arg(city);
+        QString temperature = textForTag("temperature", document);
+        if(!temperature.isEmpty())
+            toolTipText += toolTipField("Weather", "green", temperature);
 
+#ifndef Q_WS_X11
+        toolTipText = QTextDocumentFragment::fromHtml(toolTipText).toPlainText();
+#endif
+        setToolTip(toolTipText);
+}
+
+QString WeatherTrayIcon::textForTag(const QString &tag, QJsonDocument *document)
+{
+    QJsonValue currentWeather = (*document)["current_weather"];
+    if(currentWeather.isObject())
+    {
+        QJsonValue value = currentWeather[tag];
+            if(!value.isNull()) {
+            return value.toVariant().toString();
+            }
+    }
+    return QString();
+}
+
+QString WeatherTrayIcon::toolTipField(const QString &name, const QString &htmlColor, const QString &value, bool appendBr)
+{
+    return QString("<i>%1:</i>&nbsp;<font color=\"%2\">%3</font>%4")
+        .arg(name).arg(htmlColor).arg(value).arg(appendBr ? "<br>" : "");
 }
