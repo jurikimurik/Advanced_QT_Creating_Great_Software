@@ -22,15 +22,17 @@ private slots:
 private:
     QIcon getWeatherIcon(bool isDay, int weatherCode);
     void updateIcon(QJsonDocument *document);
+
     void createContextMenu();
     void populateToolTip(QJsonDocument *document);
     QString textForTag(const QString &tag, QJsonDocument *document);
     QString toolTipField(const QString &name, const QString &htmlColor, const QString &value, bool appendBr = true);
 
+    QList<QStringList> readCities(const QString &pathname = ":/1/cities.txt");
+
     QMenu menu;
     QNetworkAccessManager *networkJSONAccess;
-    QString city;
-    QString coordinates;
+    QStringList cityData;
     QCache<QUrl, QIcon> iconCache;
     int retryDelaySec;
 };

@@ -2,6 +2,7 @@
     <qresource prefix="/1">
         <file>rss.png</file>
         <file>exit.png</file>
+        <file>cities.txt</file>
     </qresource>
     <qresource prefix="/">
         <file>weather/night_99.png</file>

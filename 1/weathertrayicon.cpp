@@ -5,6 +5,9 @@
 #include <QSettings>
 #include <QTimer>
 #include <QTextDocumentFragment>
+#include <QFile>
+#include <QTextStream>
+#include <QRegularExpression>
 
 WeatherTrayIcon::WeatherTrayIcon() : QSystemTrayIcon(), retryDelaySec(1)
 {
@@ -46,10 +49,9 @@ void WeatherTrayIcon::updateIcon(QJsonDocument *document)
 
 void WeatherTrayIcon::setCity(QAction *action)
 {
-    city = action->text();
+    cityData = action->data().toStringList();
     QSettings settings;
-    settings.setValue("city", city);
-    settings.setValue("coordinates", action->data());
+    settings.setValue("cityData", cityData);
     requestJSON();
 }
 
@@ -83,15 +85,8 @@ QIcon WeatherTrayIcon::getWeatherIcon(bool isDay, int weatherCode)
 
 void WeatherTrayIcon::requestJSON()
 {
-    if(city == "Gdansk")
-        coordinates = "54.22 18.38";
-    else if(city == "Wejherowo")
-        coordinates = "54.36 18.15";
-    else if(city == "Gdynia")
-        coordinates = "54.32 18.32";
-
-    QString latitude = coordinates.split(" ").at(0);
-    QString longitude = coordinates.split(" ").at(1);
+    QString longitude = cityData.at(1);
+    QString latitude = cityData.at(2);
 
     QString url = QString("https://api.open-meteo.com/v1/forecast?latitude=%1&longitude=%2&current_weather=true")
                       .arg(latitude, longitude);
@@ -100,22 +95,18 @@ void WeatherTrayIcon::requestJSON()
 
 void WeatherTrayIcon::createContextMenu()
 {
-    QStringList cities;
-    cities << "Gdansk" << "Wejherowo" << "Gdynia";
-    QStringList allCoordinates;
-    allCoordinates << "54.22 18.38" << "54.36 18.15" << "54.32 18.32";
+    QList<QStringList> citiesData = readCities();
 
     QSettings settings;
-    city = settings.value("city", QVariant(cities.at(0))).toString();
-    coordinates = settings.value("coordinates", QVariant(allCoordinates.at(0))).toString();
+    cityData = settings.value("cityData", QVariant(citiesData.value(0))).toStringList();
     QActionGroup *group = new QActionGroup(this);
-    for (int i = 0; i < cities.size(); ++i) {
-        const QString &anCity = cities.at(i);
+    for (int i = 0; i < citiesData.size(); ++i) {
+        const QString &anCity = citiesData.at(i).at(0);
         QAction *action = menu.addAction(anCity);
         group->addAction(action);
         action->setCheckable(true);
-        action->setChecked(anCity == city);
-        action->setData(allCoordinates.at(i));
+        action->setChecked(anCity == cityData.at(0));
+        action->setData(citiesData.at(i));
     }
     connect(group, &QActionGroup::triggered, this, &WeatherTrayIcon::setCity);
     menu.addSeparator();
@@ -125,7 +116,7 @@ void WeatherTrayIcon::createContextMenu()
 
 void WeatherTrayIcon::populateToolTip(QJsonDocument *document)
 {
-        QString toolTipText = tr("<font color=darkblue>%1</font><br>").arg(city);
+        QString toolTipText = tr("<font color=darkblue>%1</font><br>").arg(cityData.at(0));
         QString temperature = textForTag("temperature", document);
         if(!temperature.isEmpty())
         toolTipText += toolTipField(tr("Temperatura"), "green", temperature, false);
@@ -153,4 +144,39 @@ QString WeatherTrayIcon::toolTipField(const QString &name, const QString &htmlCo
 {
     return QString("<i>%1:</i>&nbsp;<font color=\"%2\">%3</font>%4")
         .arg(name).arg(htmlColor).arg(value).arg(appendBr ? "<br>" : "");
+}
+
+QList<QStringList> WeatherTrayIcon::readCities(const QString &pathname)
+{
+    QList<QStringList> data;
+
+    QFile datafile(pathname);
+    if(!datafile.open(QIODevice::ReadOnly)) {
+            qDebug() << tr("Nie mogę przeczytać pliku z danymi!");
+            return data;
+    }
+
+    QTextStream stream(&datafile);
+    QRegularExpression regex(stream.readLine().split("REGEX:").value(1));
+
+    QString line;
+    while(stream.readLineInto(&line))
+    {
+            QRegularExpressionMatch match(regex.match(line));
+            if(match.hasMatch())
+            {
+                QStringList list(match.capturedTexts());
+                    //Deleting basic captured group
+                list.pop_front();
+                    //Deleting whitespaces for name
+                list.first() = list.first().simplified();
+                    //Releasing memory
+                for(QString &str : list)
+                    str.shrink_to_fit();
+
+                data.push_back(list);
+            }
+    }
+
+    return data;
 }
