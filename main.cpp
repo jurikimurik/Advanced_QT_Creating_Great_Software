@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
+#include <QWebEngineSettings>
 
 #define EXERCISE 1
 
@@ -10,12 +11,7 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    app.setApplicationName(app.translate("main", "Weather Tray Icon"));
-    app.setOrganizationName("Qtrac Ltd.");
-    app.setOrganizationDomain("qtrac.eu");
-    app.setQuitOnLastWindowClosed(false);
-    WeatherTrayIcon weatherTrayIcon;
-    weatherTrayIcon.show();
+
     return app.exec();
 }
 
