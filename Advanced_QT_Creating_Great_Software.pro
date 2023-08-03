@@ -15,7 +15,7 @@ SOURCES += \
     main.cpp
 
 HEADERS += \
-    1.2/browserwindow.
+    1.2/browserwindow.h
 
 TRANSLATIONS += \
     Advanced_QT_Creating_Great_Software_pl_PL.ts

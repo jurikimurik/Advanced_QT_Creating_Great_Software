@@ -2,8 +2,12 @@
 #define BROWSERWINDOW_H
 
 #include <QFrame>
+#include <QLabel>
+#include <QSpinBox>
+#include <QToolBar>
 #include <QWebEnginePage>
 #include <QWebEngineView>
+#include <qprogressbar.h>
 
 class BrowserWindow : public QFrame
 {
@@ -13,25 +17,23 @@ public:
                            QWebEnginePage *webPage = nullptr, QWidget *parent = nullptr,
                            Qt::WindowFlags flags = Qt::WindowFlags());
 
-    void toHtmlInto(QString &where) const
-    {
-        webView->page()->toHtml([&where](const QString &result) {where = result;});
-    }
-
-    void toPlainText(QString &where) const
-    {
-        webView->page()->toPlainText([&where](const QString &result) {where = result;});
-    }
-
 signals:
     void loadFinished(bool ok);
     void urlChanged(const QUrl &url);
 
 public slots:
     void load(const QString &url);
+    void setUrl();
+    void urlChange(const QUrl &url);
+    void loadFinish(bool ok);
+    void setZoomFactor(int zoom);
+    void zoomOut();
+    void zoomIn();
+    void enableActions(bool enable);
+    void popUpHistoryMenu();
+
     void setHtml(const QString &html) { webView->setHtml(html); }
     void showToolBar(bool on) { toolBar->setVisible(on); }
-    void enableActions(bool enable);
 
 protected:
     void focusInEvent(QFocusEvent *event) {webView->setFocus();}
@@ -46,10 +48,19 @@ private:
     QWebEngineView *webView;
     QString html;
 
+    QToolBar *toolBar;
+    QSpinBox *zoomSpinBox;
+    QProgressBar *progressBar;
+    QLabel *progressLabel;
+
     QAction *zoomOutAction;
     QAction *zoomInAction;
     QAction *setUrlAction;
     QAction *historyAction;
+
+    const int ZoomStepSize = 5;
+    const int MaxHistoryMenuItems = 20;
+    const int MaxMenuWidth = 300;
 };
 
 #endif // BROWSERWINDOW_H
