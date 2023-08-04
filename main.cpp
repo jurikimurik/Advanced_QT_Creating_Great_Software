@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    app.setApplicationName(app.translate("main", "Okno przeglądarki"));
+    app.setApplicationName(app.translate("main", "Super-window"));
 #ifdef Q_WS_MAC
         app.setCursorFlashTime(0);
 #endif
@@ -51,22 +51,9 @@ int main(int argc, char *argv[])
     QString url("pl.wikipedia.org/wiki/Main_Page");
     if (argc > 1)
         url = argv[1];
-    QDialog dialog;
     BrowserWindow *browser = new BrowserWindow(url);
     if (argc > 2) browser->showToolBar(false); // For testing; don't quote
-    QDialogButtonBox *buttonBox = new QDialogButtonBox;
-    QPushButton *quitButton = buttonBox->addButton(
-        app.translate("main", "&Wyjście"),
-        QDialogButtonBox::AcceptRole);
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(browser, 1);
-    layout->addWidget(buttonBox);
-    dialog.setLayout(layout);
-    QObject::connect(quitButton, SIGNAL(clicked()),
-                     &dialog, SLOT(accept()));
-    dialog.setWindowTitle(app.applicationName());
-    dialog.setWindowFlags(Qt::WindowSystemMenuHint);
-    dialog.show();
+    browser->show();
     return app.exec();
 }
 

@@ -44,6 +44,9 @@ private:
     void createLayout();
     void createConnections();
 
+    void readSettings();
+    void saveSettings();
+
 private:
     QWebEngineView *webView;
     QString html;
@@ -61,6 +64,10 @@ private:
     const int ZoomStepSize = 5;
     const int MaxHistoryMenuItems = 20;
     const int MaxMenuWidth = 300;
+
+    // QWidget interface
+protected:
+    virtual void closeEvent(QCloseEvent *event);
 };
 
 #endif // BROWSERWINDOW_H

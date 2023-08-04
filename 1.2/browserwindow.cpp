@@ -6,6 +6,7 @@
 #include <QMenu>
 #include <QProgressBar>
 #include <QSet>
+#include <QSettings>
 #include <QSpinBox>
 #include <QVBoxLayout>
 #include <QWebEngineHistoryItem>
@@ -24,6 +25,8 @@ BrowserWindow::BrowserWindow(const QString &url, QWebEnginePage *webPage, QWidge
     createToolBar();
     createLayout();
     createConnections();
+
+    readSettings();
 }
 
 void BrowserWindow::load(const QString &url)
@@ -206,6 +209,27 @@ void BrowserWindow::createConnections()
     connect(zoomOutAction, &QAction::triggered, this, &BrowserWindow::zoomOut);
     connect(zoomInAction, &QAction::triggered, this, &BrowserWindow::zoomIn);
     connect(zoomSpinBox, &QSpinBox::valueChanged, this, &BrowserWindow::setZoomFactor);
+}
+
+void BrowserWindow::readSettings()
+{
+    QSettings settings;
+    QByteArray geometry = settings.value("geometry").toByteArray();
+    qDebug() << geometry.isEmpty();
+    if(!geometry.isEmpty())
+        restoreGeometry(geometry);
+}
+
+void BrowserWindow::saveSettings()
+{
+    QSettings settings;
+    settings.setValue("geometry", saveGeometry());
+}
+
+void BrowserWindow::closeEvent(QCloseEvent *event)
+{
+    saveSettings();
+    QFrame::closeEvent(event);
 }
 
 //---------------------------------------------------------------------------------------------------
