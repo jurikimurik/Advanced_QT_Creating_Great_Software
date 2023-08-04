@@ -107,6 +107,15 @@ void BrowserWindow::createActions()
                     zoomInAction->setShortcut(QKeySequence::ZoomIn);
     setUrlAction = new QAction(QIcon(":/icons/set_url.png"), tr("Ustaw URL"), this);
                     historyAction = new QAction(QIcon(":/icons/history.png"), tr("Historia"), this);
+    QAction* actionBack = webView->pageAction(QWebEnginePage::Back);
+                    actionBack->setIcon(QIcon(":/icons/go_back.png"));
+    QAction* actionForward = webView->pageAction(QWebEnginePage::Forward);
+                    actionForward->setIcon(QIcon(":/icons/go_forward.png"));
+    QAction* actionReload = webView->pageAction(QWebEnginePage::Reload);
+                    actionReload->setIcon(QIcon(":/icons/reload.png"));
+    QAction* actionStop = webView->pageAction(QWebEnginePage::Stop);
+                    actionStop->setIcon(QIcon(":/icons/stop.png"));
+
 
     QList<QAction*> actions;
     actions << webView->pageAction(QWebEnginePage::Back)

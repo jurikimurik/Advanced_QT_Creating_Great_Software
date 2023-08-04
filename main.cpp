@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    app.setApplicationName(app.translate("main", "Okno przeglĻdarki"));
+    app.setApplicationName(app.translate("main", "Okno przeglądarki"));
 #ifdef Q_WS_MAC
         app.setCursorFlashTime(0);
 #endif
