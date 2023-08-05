@@ -128,10 +128,6 @@ void BrowserWindow::createActions()
             << zoomOutAction << zoomInAction << setUrlAction
             << historyAction;
 
-#ifdef  DEBUG
-    actions << webView->pageAction(QWebEnginePage::InspectElement);
-#endif
-
     webView->addActions(actions);
     webView->setContextMenuPolicy(Qt::ActionsContextMenu);
 }
@@ -139,9 +135,7 @@ void BrowserWindow::createActions()
 void BrowserWindow::createToolBar()
 {
     toolBar = new QToolBar(tr("Nawigacja"), this);
-#ifdef Q_WS_MAC
-    toolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-#endif
+
     toolBar->addAction(webView->pageAction(QWebEnginePage::Back));
     toolBar->addAction(webView->pageAction(QWebEnginePage::Forward));
     toolBar->addAction(webView->pageAction(QWebEnginePage::Reload));
@@ -161,7 +155,6 @@ void BrowserWindow::createToolBar()
     progressBar = new QProgressBar;
     progressLabel = new QLabel(tr("Postęp"));
                     progressLabel->setMargin(4);
-#ifndef Q_WS_MAC
     toolBar->addWidget(zoomLabel);
     toolBar->addWidget(zoomSpinBox);
     toolBar->addSeparator();
@@ -169,26 +162,6 @@ void BrowserWindow::createToolBar()
     toolBar->addAction(historyAction);
     toolBar->addWidget(progressLabel);
     toolBar->addWidget(progressBar);
-#else
-    QWidget *zoomWidget = new QWidget;
-    QVBoxLayout *zoomLayout = new QVBoxLayout;
-    zoomLayout->addWidget(zoomSpinBox);
-    zoomLayout->addWidget(zoomLabel);
-    zoomLayout->setAlignment(zoomLabel, Qt::AlignCenter);
-    zoomWidget->setLayout(zoomLayout);
-    toolBar->addWidget(zoomWidget);
-    toolBar->addSeparator();
-    toolBar->addAction(setUrlAction);
-    toolBar->addAction(historyAction);
-    QWidget *progressWidget = new QWidget;
-    QVBoxLayout *progressLayout = new QVBoxLayout;
-    progressLayout->setAlignment(Qt::AlignCenter);
-    progressLayout->addWidget(progressBar);
-    progressLayout->addWidget(progressLabel);
-    progressLayout->setAlignment(progressLabel, Qt::AlignCenter);
-    progressWidget->setLayout(progressLayout);
-    toolBar->addWidget(progressWidget);
-#endif
 }
 
 void BrowserWindow::createLayout()
