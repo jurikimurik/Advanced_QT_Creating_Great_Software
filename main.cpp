@@ -1,4 +1,4 @@
-#define EXERCISE 2
+#define EXERCISE 3
 
 #if EXERCISE == 1
 #include <QApplication>
@@ -56,7 +56,8 @@ int main(int argc, char *argv[])
     browser->show();
     return app.exec();
 }
+#endif
 
-
+#if EXERCISE == 3
 
 #endif
