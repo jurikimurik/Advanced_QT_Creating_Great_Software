@@ -11,11 +11,11 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    1.2/browserwindow.cpp \
+    1.3/onetviewer.cpp \
     main.cpp
 
 HEADERS += \
-    1.2/browserwindow.h
+    1.3/onetviewer.h
 
 TRANSLATIONS += \
     Advanced_QT_Creating_Great_Software_pl_PL.ts
@@ -28,4 +28,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
-    1.2/resources/icons.qrc
+    1.3/resources/icons.qrc
+
+FORMS += \
+    1.3/onetviewer.ui
